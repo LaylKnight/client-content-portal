@@ -1,19 +1,23 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 
+const DEMO_CODE = 'DEMO-1234';
+const DEMO_CLIENT_NAME = 'Portfolio Demo Studio';
+
 const ClientAuth = ({ onAuthSuccess }) => {
   const [token, setToken] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [showToken, setShowToken] = useState(false);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const trimmed = token.trim();
+  const verifyCode = async (rawToken) => {
+    const trimmed = rawToken.trim();
     if (!trimmed) return;
 
     setIsLoading(true);
     setError('');
+
+    const isDemoCode = trimmed.toLowerCase() === DEMO_CODE.toLowerCase();
 
     try {
       const apiUrl = import.meta.env.VITE_API_URL || '';
@@ -23,6 +27,15 @@ const ClientAuth = ({ onAuthSuccess }) => {
       localStorage.setItem('clientName', res.data.clientName);
       onAuthSuccess(trimmed, res.data.clientName);
     } catch (err) {
+      // If using the Portfolio Demo code and no backend is connected (e.g. static Vercel/Netlify deploy),
+      // seamlessly fall back to client-side demo mode so portfolio visitors can test the full UI.
+      if (isDemoCode && err.response?.status !== 401) {
+        localStorage.setItem('clientToken', DEMO_CODE);
+        localStorage.setItem('clientName', DEMO_CLIENT_NAME);
+        onAuthSuccess(DEMO_CODE, DEMO_CLIENT_NAME);
+        return;
+      }
+
       if (err.response?.status === 401) {
         setError('Invalid access code. Please check and try again.');
       } else {
@@ -31,6 +44,17 @@ const ClientAuth = ({ onAuthSuccess }) => {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    verifyCode(token);
+  };
+
+  const handleDemoClick = () => {
+    setToken(DEMO_CODE);
+    setShowToken(true);
+    verifyCode(DEMO_CODE);
   };
 
   return (
@@ -85,6 +109,18 @@ const ClientAuth = ({ onAuthSuccess }) => {
           {isLoading ? 'Verifying...' : 'Continue'}
         </button>
       </form>
+
+      <div className="mt-6 pt-5 border-t border-gray-100">
+        <p className="text-xs text-gray-400 mb-2">Viewing from my portfolio?</p>
+        <button
+          type="button"
+          onClick={handleDemoClick}
+          disabled={isLoading}
+          className="w-full py-2.5 px-4 bg-indigo-50 hover:bg-indigo-100 text-[#4a90e2] rounded-lg text-sm font-semibold transition-colors"
+        >
+          Try Interactive Demo ({DEMO_CODE})
+        </button>
+      </div>
     </div>
   );
 };

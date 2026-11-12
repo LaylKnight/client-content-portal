@@ -11,6 +11,7 @@ const TOTAL_STEPS = 4;
 
 const UploadForm = ({ token, clientName, onLogout }) => {
   const [step, setStep] = useState(1);
+  const isDemo = token?.trim().toLowerCase() === 'demo-1234';
 
   const [files, setFiles] = useState([]);
   const [uploadTypes, setUploadTypes] = useState([]);
@@ -25,6 +26,28 @@ const UploadForm = ({ token, clientName, onLogout }) => {
 
   const next = () => setStep(s => Math.min(s + 1, TOTAL_STEPS));
   const prev = () => setStep(s => Math.max(s - 1, 1));
+
+  const resetWizard = () => {
+    setStep(1);
+    setFiles([]);
+    setUploadTypes([]);
+    setProjectTitle('');
+    setProjectLocation('');
+    setVoiceNote(null);
+    setNotes('');
+  };
+
+  const simulateClientSideDemoUpload = async () => {
+    for (let p = 20; p <= 100; p += 20) {
+      await new Promise(resolve => setTimeout(resolve, 220));
+      setUploadProgress(p);
+    }
+    setMessage({
+      type: 'success',
+      text: 'Demo upload complete! (Simulated — no files written to Google Drive)',
+    });
+    resetWizard();
+  };
 
   const handleSubmit = async () => {
     setIsUploading(true);
@@ -44,7 +67,9 @@ const UploadForm = ({ token, clientName, onLogout }) => {
       const apiUrl = import.meta.env.VITE_API_URL || '';
       const res = await axios.post(`${apiUrl}/api/upload`, data, {
         onUploadProgress: (e) => {
-          setUploadProgress(Math.round((e.loaded * 100) / e.total));
+          if (e.total) {
+            setUploadProgress(Math.round((e.loaded * 100) / e.total));
+          }
         }
       });
 
@@ -52,14 +77,15 @@ const UploadForm = ({ token, clientName, onLogout }) => {
         ? res.data.message
         : 'Upload successful! Your files are in Google Drive.';
       setMessage({ type: 'success', text: successText });
-      setStep(1);
-      setFiles([]);
-      setUploadTypes([]);
-      setProjectTitle('');
-      setProjectLocation('');
-      setVoiceNote(null);
-      setNotes('');
+      resetWizard();
     } catch (err) {
+      // If running in static frontend-only Demo Mode without a backend server,
+      // simulate the upload progress bar so portfolio visitors get the full experience.
+      if (isDemo && err.response?.status !== 400 && err.response?.status !== 401) {
+        await simulateClientSideDemoUpload();
+        return;
+      }
+
       console.error('Upload error:', err);
       if (err.response?.status === 401) {
         setMessage({ type: 'error', text: 'Session expired. Please sign out and re-enter your access code.' });
@@ -78,7 +104,14 @@ const UploadForm = ({ token, clientName, onLogout }) => {
       <div className="flex justify-between items-center mb-6">
         <div>
           <p className="text-xs text-gray-400 font-medium">Signed in as</p>
-          <p className="text-sm font-semibold text-gray-700">{clientName}</p>
+          <div className="flex items-center gap-2">
+            <p className="text-sm font-semibold text-gray-700">{clientName}</p>
+            {isDemo && (
+              <span className="px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider bg-indigo-100 text-[#4a90e2] rounded-full">
+                Demo Mode
+              </span>
+            )}
+          </div>
         </div>
         <button
           type="button"
