@@ -190,6 +190,21 @@ npm run dev
 
 ---
 
+## 🌐 Deploying to Netlify (Live Portfolio Demo)
+
+This repository includes a [`netlify.toml`](./netlify.toml) pre-configured for free static hosting. When deployed without a backend server attached, the app operates in **Interactive Demo Mode**:
+
+1. Push your repository to GitHub.
+2. Sign in to [Netlify](https://app.netlify.com/) and click **Add new site > Import an existing project**.
+3. Select your repository. Netlify will auto-detect the build settings from `netlify.toml`:
+   - **Base directory:** `frontend`
+   - **Build command:** `npm run build`
+   - **Publish directory:** `dist`
+4. Click **Deploy site**.
+5. Copy your live URL (e.g. `https://your-app.netlify.app`) and test the **"Try Interactive Demo (DEMO-1234)"** button on the login screen.
+
+---
+
 ## 🔒 Security & Privacy Notes
 
 - **Never commit `.env` or `clients.json`:** Both files are listed in `.gitignore` to ensure OAuth secrets, client access codes, and Google Drive folder IDs remain private.
