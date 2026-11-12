@@ -1,0 +1,32 @@
+# Env files
+.env
+backend/.env
+frontend/.env
+frontend/.env.local
+
+# Service account key
+backend/config/credentials.json
+
+# Client tokens config (never commit)
+backend/clients.json
+
+# Local AI / Editor configs & internal notes
+.claude/
+setup-guide.md
+SECURITY-CHECKLIST.md
+
+# Dependencies
+node_modules/
+backend/node_modules/
+frontend/node_modules/
+
+# Build outputs
+frontend/dist/
+frontend/build/
+
+# Logs
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db

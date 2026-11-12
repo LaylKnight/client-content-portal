@@ -1,0 +1,10 @@
+{
+  "demo-client-1234": {
+    "name": "Demo Studio",
+    "folderId": "YOUR_GOOGLE_DRIVE_FOLDER_ID_HERE"
+  },
+  "sample-brand-5678": {
+    "name": "Sample Brand Media",
+    "folderId": "YOUR_GOOGLE_DRIVE_FOLDER_ID_HERE"
+  }
+}
