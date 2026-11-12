@@ -7,7 +7,6 @@ A full-stack Progressive Web Application (PWA) designed for agencies and content
 ## ✨ Key Features
 
 - **Per-Client Access Code Authentication:** Each client receives a unique access code mapped server-side to their dedicated Google Drive folder. Google Drive Folder IDs and credentials are never exposed to the browser.
-- **Built-In Portfolio Demo Mode (`DEMO-1234`):** Allows recruiters and portfolio visitors to sign in with `DEMO-1234` and test the full 4-step wizard, voice waveform recorder, and upload progress bar without needing Google Drive credentials or writing files to cloud storage.
 - **4-Step Guided Upload Wizard:**
   1. **Media Selection:** Upload multiple photos and videos with instant image thumbnail previews and file size indicators.
   2. **Project Details:** Categorize submissions (*Project Pictures & Videos*, *Customer Video Testimonials*) and tag the project title and location.
@@ -153,9 +152,7 @@ npm run dev
 
 ### 1. Sign In with Your Access Code
 - Open the web app in your browser (or launch the installed PWA from your mobile home screen).
-- Enter the **Access Code** provided to you and click **Continue**:
-  - **For Portfolio Reviewers / Quick Testing:** Enter **`DEMO-1234`** to explore the full 4-step workflow in sandboxed Demo Mode (simulates uploads without requiring Google Drive setup).
-  - **For Configured Clients:** Enter a client token defined in `backend/clients.json`.
+- Enter the **Access Code** provided to you (configured in `backend/clients.json`) and click **Continue**.
 - Your session is saved automatically on your device so you won't need to re-enter the code on future visits. You can switch accounts anytime by clicking **Sign out** in the top-right corner.
 
 ### 2. Step 1 — Upload Media Files
@@ -201,7 +198,7 @@ This repository includes a [`netlify.toml`](./netlify.toml) pre-configured for f
    - **Build command:** `npm run build`
    - **Publish directory:** `dist`
 4. Click **Deploy site**.
-5. Copy your live URL (e.g. `https://your-app.netlify.app`) and test the **"Try Interactive Demo (DEMO-1234)"** button on the login screen.
+5. Your application will be live at `https://<your-site-name>.netlify.app`.
 
 ---
 
